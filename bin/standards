@@ -1,0 +1,19 @@
+#!/bin/bash
+
+printf "running gofmt...\n"
+gofmt -w ./
+
+printf "running go vet...\n"
+go vet
+
+if command -v staticcheck >/dev/null 2>&1; then
+  printf "running staticcheck...\n"
+  staticcheck ./...
+else
+  printf "note: staticcheck dependency is missing. to see results install for your OS and ensure the binary exists in path\n"
+  printf "see https://staticcheck.io/docs/getting-started/"
+fi
+
+printf "running tests...\n"
+go test ./...
+
