@@ -42,7 +42,7 @@ func (n *Node) findReplacement() *Node {
 		return n.left
 	}
 
-	// we are a Node with both a left and a right child, find the smallest IntValue greater than
+	// we are a Node with both a left and a right child, find the smallest value greater than
 	// our own to use as the successor
 	return n.right.min()
 }
