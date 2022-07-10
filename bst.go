@@ -14,16 +14,16 @@ type (
 		// DeepestNodes returns the Node values for the corresponding deepest nodes
 		DeepestNodes() ([]*Node, int)
 
-		// Delete ensures removal of the given IntValue,
+		// Delete ensures removal of the given node,
 		// returning true if it was present to begin with or false if no action was required
 		Delete(node *Node) bool
-		// Insert appends the given IntValue as a leaf Node after traversing the tree to find the appropriate location.
-		// returns true if the IntValue is new and insertion was required, false if no action was required
+		// Insert appends the give Node as a leaf after traversing the tree to find the appropriate location.
+		// returns true if the Node's value is new and insertion was required, false if no action was required
 		Insert(node *Node) bool
 		Max() *Node
 		Min() *Node
 		// SearchInt attempts to retrieve a Node containing the give integer searchValue
-		// returns nil if the IntValue does not exist
+		// returns nil if the int value does not exist in any node
 		SearchInt(searchValue int) *Node
 		WalkInOrder() []*Node   // left subtree, root, and then right subtree
 		WalkPostOrder() []*Node // left subtree, then right subtree, then root
@@ -58,7 +58,7 @@ func (t *tree) Delete(removal *Node) bool {
 	replacement := removal.findReplacement()
 	// breaking out this case because it is more complicated than the others-
 	// if the Node to be removed has both a left and right child, the replacement
-	// will be the lowest IntValue exceeding its own, and not necessarily a direct parent (see findReplacement)
+	// will be the lowest value exceeding its own, and not necessarily a direct parent (see findReplacement)
 	if removal.isFork() {
 		if replacement.parent != removal {
 			t.shiftNodes(replacement, replacement.right)
@@ -73,7 +73,7 @@ func (t *tree) Delete(removal *Node) bool {
 		replacement.left.parent = replacement
 	} else {
 		// any leaf or single child nodes are handled by simply shifting the next available
-		// IntValue as right || left || nil
+		// node as right || left || nil
 		t.shiftNodes(removal, replacement)
 	}
 
@@ -94,7 +94,7 @@ func (t *tree) Insert(newNode *Node) bool {
 	for currentNode != nil {
 		parentNode = currentNode
 		if newNode.value == currentNode.value {
-			return false // always safe to return (no action needed) if the IntValue already exists
+			return false // always safe to return (no action needed) if the value already exists
 		}
 
 		if newNode.value < currentNode.value {

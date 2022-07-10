@@ -41,16 +41,16 @@ type BST interface {
     // DeepestNodes returns the Node values for the corresponding deepest nodes
     DeepestNodes() ([]*Node, int)
 
-    // Delete ensures removal of the given IntValue,
+    // Delete ensures removal of the given node,
     // returning true if it was present to begin with or false if no action was required
     Delete(node *Node) bool
-    // Insert appends the given IntValue as a leaf Node after traversing the tree to find the appropriate location.
-    // returns true if the IntValue is new and insertion was required, false if no action was required
+    // Insert appends the give Node as a leaf after traversing the tree to find the appropriate location.
+    // returns true if the Node's value is new and insertion was required, false if no action was required
     Insert(node *Node) bool
     Max() *Node
     Min() *Node
     // SearchInt attempts to retrieve a Node containing the give integer searchValue
-    // returns nil if the IntValue does not exist
+    // returns nil if the int value does not exist in any node
     SearchInt(searchValue int) *Node
     WalkInOrder() []*Node   // left subtree, root, and then right subtree
     WalkPostOrder() []*Node // left subtree, then right subtree, then root
