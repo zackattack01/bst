@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# quick script to run common tasks, install the following to use all parts
+# staticcheck - see https://staticcheck.io/docs/getting-started/
+# gomarkdoc - go install github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest
+
 printf "running gofmt...\n"
 gofmt -w ./
 
@@ -9,9 +13,11 @@ go vet
 if command -v staticcheck >/dev/null 2>&1; then
   printf "running staticcheck...\n"
   staticcheck ./...
-else
-  printf "note: staticcheck dependency is missing. to see results install for your OS and ensure the binary exists in path\n"
-  printf "see https://staticcheck.io/docs/getting-started/"
+fi
+
+if command -v gomarkdoc >/dev/null 2>&1; then
+  printf "regenerating docs...\n"
+  gomarkdoc --repository.url "https://github.com/zackattack01/bst" --repository.default-branch main --output README.md
 fi
 
 printf "running tests...\n"

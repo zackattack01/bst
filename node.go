@@ -1,24 +1,22 @@
 package bst
 
-import "fmt"
-
 type (
 	Node struct {
-		// if present, the left Node must contain a value less than that of the current Node
+		// if present, the left node must contain a value less than that of the current node
 		left *Node
-		// if present, the right Node must contain a value greater than that of the current Node
+		// if present, the right node must contain a value greater than that of the current node
 		right *Node
-		// all nodes beyond the root will have a parent Node, indicating the last Node used for comparison
+		// all nodes beyond the root will have a parent node, indicating the last node used for comparison
 		parent *Node
 		value  int
 	}
 )
 
-func NewIntegerNode(value int) *Node {
-	return &Node{value: value}
+func (n *Node) IntValue() int {
+	return n.value
 }
 
-func NodesToIntSlice(nodes []*Node) []int {
+func IntegerNodeValues(nodes []*Node) []int {
 	outputNodes := make([]int, 0)
 	for _, node := range nodes {
 		outputNodes = append(outputNodes, node.value)
@@ -27,48 +25,52 @@ func NodesToIntSlice(nodes []*Node) []int {
 	return outputNodes
 }
 
-// successor returns the Node with the smallest value that is still greater than the called Node's value
-func (n *Node) successor() *Node {
+// findReplacement is called on a Node pending deletion
+// returns the appropriate Node to take its place
+func (n *Node) findReplacement() *Node {
 	if n == nil {
 		return nil
-	} else if n.right != nil {
-		return n.right.min()
 	}
 
-	currentNode := n
-	parentNode := n.parent
-	for parentNode != nil && currentNode == parentNode.right {
-		currentNode = parentNode
-		parentNode = parentNode.parent
+	// if there is no left, it's safe to go right, even if nil (valid case for a leaf Node)
+	if n.left == nil {
+		return n.right
 	}
 
-	return parentNode
+	// if there is no right, we know we have a left at this point so use that
+	if n.right == nil {
+		return n.left
+	}
+
+	// we are a Node with both a left and a right child, find the smallest IntValue greater than
+	// our own to use as the successor
+	return n.right.min()
 }
 
 // max returns the Node with the maximum value from this Node's point in the tree
 func (n *Node) max() *Node {
 	currentNode := n
-	for {
-		if currentNode.right == nil {
-			return currentNode
-		}
-
+	for currentNode.right != nil {
 		currentNode = currentNode.right
 	}
+
+	return currentNode
 }
 
 // min returns the Node with the minimum value from this Node's point in the tree
 func (n *Node) min() *Node {
 	currentNode := n
-	for {
-		if currentNode.left == nil {
-			return currentNode
-		}
-
+	for currentNode.left != nil {
 		currentNode = currentNode.left
 	}
+
+	return currentNode
 }
 
-// readability/convenience method - only the root Node has a nil parent
-func (n *Node) isRoot() bool   { return n.parent == nil }
-func (n *Node) String() string { return fmt.Sprintf("%v", n.value) }
+// handful of private readability/convenience methods to remove boilerplate elsewhere ---------
+// isRoot - only the root Node has a nil parent
+func (n *Node) isRoot() bool      { return n.parent == nil }
+func (n *Node) isLeftChild() bool { return !n.isRoot() && n.parent.left == n }
+
+// isFork - does this Node have both a left and right child
+func (n *Node) isFork() bool { return n.left != nil && n.right != nil }
